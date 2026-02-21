@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DMS ACCESS</title>
+<style>
+  html, body {margin:0; padding:0; min-height:100vh; background:#000; color:#0f0; font-family:"Courier New", monospace; text-align:center; overflow-y:auto;}
+  body {display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:5vh;}
+  .login-box {border:2px solid #0f0; padding:50px 80px; background:rgba(0,0,0,0.94); max-width:520px; margin:10vh auto 0 auto; z-index:10; box-shadow:0 0 40px rgba(0,255,0,0.15);}
+  .logo {width:140px; margin-bottom:30px; filter:drop-shadow(0 0 6px #0f0);}
+  input, button {background:#000; color:#0f0; border:1px solid #0f0; padding:12px; margin:12px 0; font-size:20px; width:85%;}
+  button {cursor:pointer; font-weight:bold;}
+  #status {font-size:26px; margin-top:25px; min-height:80px; text-shadow:0 0 8px #0f0;}
+  #files img {display:none; max-width:100%; margin:30px auto; border:2px solid #0f0; box-shadow:0 0 18px #0f0;}
+  #loading {position:fixed; inset:0; background:rgba(0,0,0,0.98); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:999; opacity:0; pointer-events:none; transition:opacity 1.4s;}
+  #loading.show {opacity:1; pointer-events:all;}
+  #loading-text {font-size:2.3em; margin-bottom:35px; text-shadow:0 0 14px #0f0;}
+  .progress-container {width:65%; max-width:560px; background:#0a0a0a; border:1px solid #0f0; height:34px; border-radius:3px; overflow:hidden;}
+  .progress-bar {width:0%; height:100%; background:linear-gradient(90deg,#0f0 0%,#00ff88 50%,#0f0 100%); transition:width 3s ease-in-out;}
+  .blink {animation:blink 0.9s step-end infinite;} 
+  @keyframes blink {50% {opacity:0;}}
+  textarea {width:80%; height:200px; margin:20px auto; background:#000; color:#0f0; border:2px solid #0f0; padding:10px; font-family:"Courier New", monospace; display:none;}
+  .crt::before {content:" "; position:absolute; inset:0; background:repeating-linear-gradient(transparent 0px, rgba(0,0,0,0.1) 1px, transparent 2px); pointer-events:none; z-index:9999;}
+</style>
+</head>
+<body class="crt">
+
+<div class="login-box" id="mainBox">
+  <img src="U.S DEPARTMENT OF METAPHYSICAL SCIENCES.jpg" class="logo" alt="DMS Seal">
+
+  <div id="loginForm">
+    <div>USERNAME</div>
+    <input id="user"><br>
+    <div>PASSWORD</div>
+    <input id="pass" type="password"><br>
+    <button onclick="login()">ACCESS GRANTED</button>
+  </div>
+
+  <div id="status"><span class="blink">></span></div>
+</div>
+
+<div id="files">
+  <img id="img1" src="D.M.S.jpg">
+  <img id="img2" src="D.M.S 2.jpg">
+  <img id="img3" src="D.M.S 3.jpg">
+  <img id="sector5" src="D.M.S 4.jpg">
+</div>
+
+<!-- Level 6 input and textarea -->
+<div id="level6Input" style="display:none;">
+  <div>LEVEL 6 PASSWORD</div>
+  <input id="level6Pass" type="password"><br>
+  <button onclick="level6Login()">SUBMIT</button>
+</div>
+
+<textarea id="file1" readonly></textarea>
+
+<div id="loading">
+  <div id="loading-text">VERIFYING CLEARANCE...</div>
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+</div>
+
+<script>
+let sector5Unlocked = false;
+let sector6Unlocked = false;
+
+// Typing effect
+function typeText(el, text, cb){
+  let i=0; el.innerHTML="";
+  const iv=setInterval(()=>{
+    if(i<text.length){ el.innerHTML+=text[i++]; } 
+    else { clearInterval(iv); if(cb) cb(); }
+  },35);
+}
+
+// Unlock Sector 5 & 6 with CTRL+SHIFT+X
+document.addEventListener("keydown", e=>{
+  if(e.ctrlKey && e.shiftKey && e.key.toLowerCase()==="x"){
+    if(!sector5Unlocked){
+      sector5Unlocked=true;
+      alert("SECTOR 5 UNLOCKED! ENTER PASSWORD NOW");
+      document.getElementById("level6Input").style.display="block";
+    } else if(sector5Unlocked && !sector6Unlocked){
+      alert("SECTOR 6 UNLOCKED!");
+    }
+  }
+});
+
+function login(){
+  const u = document.getElementById("user").value.trim();
+  const p = document.getElementById("pass").value.trim();
+  const status = document.getElementById("status");
+  const loading = document.getElementById("loading");
+  const progressBar = document.getElementById("progressBar");
+
+  if(u==="Level 4" && p==="Project 101"){
+    document.getElementById("loginForm").style.display="none";
+    typeText(status,"ACCESS GRANTED – DECRYPTING...",()=>{
+      loading.classList.add("show");
+      setTimeout(()=>{progressBar.style.width="100%";},100);
+      setTimeout(()=>{
+        loading.classList.remove("show");
+        typeText(status,"PAGE 1 DECRYPTED",()=>{document.getElementById("img1").style.display="block";});
+        setTimeout(()=>{typeText(status,"PAGE 2 DECRYPTED",()=>{document.getElementById("img2").style.display="block";});},900);
+        setTimeout(()=>{typeText(status,"PAGE 3 DECRYPTED",()=>{document.getElementById("img3").style.display="block";});},1800);
+        setTimeout(()=>{typeText(status,"ALL FILES UNSEALED - LEVEL 4 ACTIVE");},2700);
+      },300);
+    });
+    return;
+  }
+
+  if(sector5Unlocked && p==="Project_NULL"){
+    document.getElementById("loginForm").style.display="none";
+    typeText(status,"SECTOR 5 AUTHORIZED",()=>{
+      document.getElementById("sector5").style.display="block";
+      document.getElementById("level6Input").style.display="block";
+      status.innerHTML+='<br><span style="color:red; font-size:0.7em; opacity:0.7;">SECRET SECTOR 5 DATA STREAM</span>';
+    });
+    return;
+  }
+
+  status.className="";
+  typeText(status,"PAGE DOES NOT EXIST");
+}
+
+function level6Login(){
+  const p = document.getElementById("level6Pass").value.trim();
+  const file1 = document.getElementById("file1");
+  const status = document.getElementById("status");
+
+  if(sector5Unlocked && p === "Project_NULL"){
+    sector6Unlocked = true;
+    document.getElementById("level6Input").style.display="none";
+    status.innerHTML = "LEVEL 6 AUTHORIZED! FILES UNSEALED";
+
+    fetch("Level 6.txt").then(r=>r.text()).then(t=>file1.value=t).catch(()=>file1.value="Failed to load Level 6.txt");
+
+    file1.style.display="block";
+  } else if(sector5Unlocked){
+    document.body.innerHTML = `<div style="text-align:center; margin-top:10vh; color:#000;">
+      <div style="background:#f8f9fa; display:inline-block; padding:50px 100px; border-radius:8px;">
+        <h1 style="font-size:48px; margin:0;">404</h1>
+        <p style="margin:10px 0 0 0; font-size:18px;">Page Not Found</p>
+      </div>
+    </div>`;
+  }
+}
+</script>
+
+</body>
+</html>
